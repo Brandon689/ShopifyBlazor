@@ -1,0 +1,53 @@
+﻿@page "/"
+@using Shopify.Services
+@using ShopifyPlaywrightSitemapScraping
+@using System.Text.Json
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+<div>
+    <label for="inputText">Enter Text:</label>
+    <input id="inputText" @bind="inputValue" />
+    <button @onclick="Submit">Submit</button>
+    <p>You entered: @inputValue</p>
+</div>
+<button @onclick="treasure">fishing!</button>
+
+
+@if (p !=null)
+{
+    @for (int i = 0; i < p.Count; i++)
+    {
+        <img width="200" src="@p[i].Image.Src" />
+        <h4>@p[i].Title</h4>
+    }
+}
+
+@code {
+    PlaywrightController controller = new PlaywrightController();
+    string god;
+    private string inputValue = "https://www.kawaiies.com";
+    List<Product> p;
+    
+    private async Task Submit()
+    {
+        await controller.Init(inputValue);
+        p = await controller.Download(1, 10);
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //var dir = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\kawaiies", "clover-the-cow.json");
+        //string content = File.ReadAllText(dir);
+        //Root rootList = JsonSerializer.Deserialize<Root>(content);
+        //god = rootList.Product.Images[0].Src;
+    }
+
+    public async Task treasure()
+    {
+        await controller.DownloadToFS();
+    }
+}
